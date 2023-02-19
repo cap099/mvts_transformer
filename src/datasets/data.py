@@ -95,6 +95,36 @@ class BaseData(object):
         else:
             self.n_proc = min(n_proc, cpu_count())
 
+class Kiln1Data(BaseData):
+
+    def __init__(self, root_dir = None, file_list=None, pattern=None, n_proc=1, limit_size=None, config=None):
+
+        self.set_num_processes(n_proc=n_proc)
+
+        self.all_df = pd.read_feather('/home/caleb/software/kiln/data/kiln1.feather')
+        self.all_df = self.all_df.sort_values(by=['episodeID'])  # datasets is presorted
+
+        self.labels_df = self.all_df[['episodeID', 'extended']].drop_duplicates()
+        self.labels_df = self.labels_df.set_index('episodeID')
+        self.labels_df.reset_index(inplace=True, drop = True)
+        self.all_df = self.all_df.set_index('episodeID')
+        self.all_IDs = self.all_df.index.unique()  # all sample (session) IDs
+        self.max_seq_len = 120
+        if limit_size is not None:
+            if limit_size > 1:
+                limit_size = int(limit_size)
+            else:  # interpret as proportion if in (0, 1]
+                limit_size = int(limit_size * len(self.all_IDs))
+            self.all_IDs = self.all_IDs[:limit_size]
+            self.all_df = self.all_df.loc[self.all_IDs]
+
+        self.feature_names = ['indoorHumidity', 'indoorTemp', 'temperatureOutside', 'dewpointOutside', 'humidityOutside', 'pressureOutside']
+        self.feature_df = self.all_df[self.feature_names]
+
+        self.class_names = ['1', '0']
+ 
+
+
 
 class WeldData(BaseData):
     """
@@ -445,4 +475,5 @@ class PMUData(BaseData):
 
 data_factory = {'weld': WeldData,
                 'tsra': TSRegressionArchive,
-                'pmu': PMUData}
+                'pmu': PMUData,
+                'kiln1':Kiln1Data}

@@ -113,10 +113,10 @@ def collate_superv(data, max_len=None):
         X[i, :end, :] = features[i][:end, :]
 
     targets = torch.stack(labels, dim=0)  # (batch_size, num_labels)
+    targets = targets[:, 0]
 
     padding_masks = padding_mask(torch.tensor(lengths, dtype=torch.int16),
                                  max_len=max_len)  # (batch_size, padded_length) boolean tensor, "1" means keep
-
     return X, targets, padding_masks, IDs
 
 

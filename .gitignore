@@ -30,3 +30,7 @@ _build
 logs
 
 .idea
+
+# Outputs
+*.xls
+output/

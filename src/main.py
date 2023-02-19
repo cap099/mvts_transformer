@@ -213,12 +213,14 @@ def main(config):
 
     train_dataset = dataset_class(my_data, train_indices)
 
+
     train_loader = DataLoader(dataset=train_dataset,
                               batch_size=config['batch_size'],
                               shuffle=True,
                               num_workers=config['num_workers'],
                               pin_memory=True,
                               collate_fn=lambda x: collate_fn(x, max_len=model.max_len))
+    
 
     trainer = runner_class(model, train_loader, device, loss_module, optimizer, l2_reg=output_reg,
                                  print_interval=config['print_interval'], console=config['console'])
@@ -232,8 +234,7 @@ def main(config):
     best_metrics = {}
 
     # Evaluate on validation before training
-    aggr_metrics_val, best_metrics, best_value = validate(val_evaluator, tensorboard_writer, config, best_metrics,
-                                                          best_value, epoch=0)
+    aggr_metrics_val, best_metrics, best_value = validate(val_evaluator, tensorboard_writer, config, best_metrics, best_value, epoch=0)
     metrics_names, metrics_values = zip(*aggr_metrics_val.items())
     metrics.append(list(metrics_values))
 

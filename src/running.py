@@ -398,6 +398,7 @@ class SupervisedRunner(BaseRunner):
         for i, batch in enumerate(self.dataloader):
 
             X, targets, padding_masks, IDs = batch
+            print(X.shape, targets.shape, padding_masks.shape,len(IDs))
             targets = targets.to(self.device)
             padding_masks = padding_masks.to(self.device)  # 0s: ignore
             # regression: (batch_size, num_labels); classification: (batch_size, num_classes) of logits
